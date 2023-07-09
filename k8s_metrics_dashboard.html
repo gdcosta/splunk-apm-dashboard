@@ -1,0 +1,348 @@
+<form version="1.1">
+  <label>k8s metrics dashboard</label>
+  <description></description>
+  <fieldset submitButton="false">
+    <input type="time" searchWhenChanged="true" token="global_time_tok">
+      <label>Time Range</label>
+      <default>
+        <earliest>-1h</earliest>
+        <latest>now</latest>
+      </default>
+    </input>
+    <input type="dropdown">
+      <label>Time Span</label>
+      <choice value="auto">auto</choice>
+      <choice value="5s">5s</choice>
+      <choice value="10s">10s</choice>
+      <choice value="30s">30s</choice>
+      <choice value="1m">1m</choice>
+      <choice value="5m">5m</choice>
+      <choice value="10m">10m</choice>
+      <choice value="30m">30m</choice>
+      <choice value="1h">1h</choice>
+      <default>auto</default>
+      <change>
+        <eval token="timechart_span">if($value$ == "auto", "", "span=".$value$)</eval>
+        <eval token="mstats_span">"span=".$value$</eval>
+      </change>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <chart>
+        <title>runtime.jvm.gc.live.data.size</title>
+        <search>
+          <query>| mstats avg("runtime.jvm.gc.live.data.size") prestats=true WHERE "index"="k8s_ws_petclinic_metrics" $mstats_span$ BY container_id
+| timechart avg("runtime.jvm.gc.live.data.size") $timechart_span$ useother=false BY container_id WHERE max in top5
+| fields - _span*</query>
+          <earliest>$global_time_tok.earliest$</earliest>
+          <latest>$global_time_tok.latest$</latest>
+        </search>
+        <option name="charting.drilldown">none</option>
+        <option name="charting.chart">line</option>
+        <option name="charting.chart.nullValueMode">connect</option>
+        <option name="charting.chart.showDataLabels">none</option>
+        <option name="charting.fieldColors">{"Avg":"#1e93c6","404623bb84d33f8c2def47b5c5300317064f4b5c31ed60cc796e60ab7aaca4b6":"#1e93c6","6afa53883b720fc3a348fc6431cae0d73f1217d0ac687deb90eafb9752f24a78":"#f2b827","e4c47c7f0340e31b037e95ad42c4812e000c28f3f5544bc90d5b681d45fec2bf":"#d6563c"}</option>
+        <option name="charting.gridLinesX.showMajorLines">true</option>
+        <option name="charting.axisY.abbreviation">auto</option>
+        <option name="charting.legend.mode">seriesCompare</option>
+        <option name="charting.fieldDashStyles">{"Avg":"solid","404623bb84d33f8c2def47b5c5300317064f4b5c31ed60cc796e60ab7aaca4b6":"solid","6afa53883b720fc3a348fc6431cae0d73f1217d0ac687deb90eafb9752f24a78":"solid","e4c47c7f0340e31b037e95ad42c4812e000c28f3f5544bc90d5b681d45fec2bf":"solid"}</option>
+        <option name="displayview">analytics_workspace</option>
+      </chart>
+    </panel>
+    <panel>
+      <chart>
+        <title>runtime.jvm.memory.used</title>
+        <search>
+          <query>| mstats avg("runtime.jvm.memory.used") prestats=true WHERE "index"="k8s_ws_petclinic_metrics" $mstats_span$ BY id
+| timechart avg("runtime.jvm.memory.used") $timechart_span$ useother=false BY id WHERE max in top5
+| fields - _span*</query>
+          <earliest>$global_time_tok.earliest$</earliest>
+          <latest>$global_time_tok.latest$</latest>
+        </search>
+        <option name="charting.drilldown">none</option>
+        <option name="charting.chart">line</option>
+        <option name="charting.chart.nullValueMode">connect</option>
+        <option name="charting.chart.showDataLabels">none</option>
+        <option name="charting.fieldColors">{"Avg":"#1e93c6","CodeHeap 'profiled nmethods'":"#1e93c6","Compressed Class Space":"#f2b827","G1 Eden Space":"#d6563c","G1 Old Gen":"#6a5c9e","Metaspace":"#31a35f"}</option>
+        <option name="charting.gridLinesX.showMajorLines">true</option>
+        <option name="charting.axisY.abbreviation">auto</option>
+        <option name="charting.legend.mode">seriesCompare</option>
+        <option name="charting.fieldDashStyles">{"Avg":"solid","CodeHeap 'profiled nmethods'":"solid","Compressed Class Space":"solid","G1 Eden Space":"solid","G1 Old Gen":"solid","Metaspace":"solid"}</option>
+        <option name="displayview">analytics_workspace</option>
+      </chart>
+    </panel>
+    <panel>
+      <chart>
+        <title>runtime.jvm.threads.states</title>
+        <search>
+          <query>| mstats avg("runtime.jvm.threads.states") prestats=true WHERE "index"="k8s_ws_petclinic_metrics" $mstats_span$ BY state
+| timechart avg("runtime.jvm.threads.states") $timechart_span$ useother=false BY state WHERE max in top5
+| fields - _span*</query>
+          <earliest>$global_time_tok.earliest$</earliest>
+          <latest>$global_time_tok.latest$</latest>
+        </search>
+        <option name="charting.drilldown">none</option>
+        <option name="charting.chart">line</option>
+        <option name="charting.chart.nullValueMode">connect</option>
+        <option name="charting.chart.showDataLabels">none</option>
+        <option name="charting.fieldColors">{"Avg":"#1e93c6","blocked":"#1e93c6","new":"#f2b827","runnable":"#d6563c","timed-waiting":"#6a5c9e","waiting":"#31a35f"}</option>
+        <option name="charting.gridLinesX.showMajorLines">true</option>
+        <option name="charting.axisY.abbreviation">auto</option>
+        <option name="charting.legend.mode">seriesCompare</option>
+        <option name="charting.fieldDashStyles">{"Avg":"solid","blocked":"solid","new":"solid","runnable":"solid","timed-waiting":"solid","waiting":"solid"}</option>
+        <option name="displayview">analytics_workspace</option>
+      </chart>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <chart>
+        <title>otelcol_exporter_sent_metric_points</title>
+        <search>
+          <query>| mstats avg("otelcol_exporter_sent_metric_points") prestats=true WHERE "index"="k8s_ws_metrics" $mstats_span$ BY exporter
+| timechart avg("otelcol_exporter_sent_metric_points") $timechart_span$ useother=false BY exporter WHERE max in top5
+| fields - _span*</query>
+          <earliest>$global_time_tok.earliest$</earliest>
+          <latest>$global_time_tok.latest$</latest>
+        </search>
+        <option name="charting.drilldown">none</option>
+        <option name="charting.chart">line</option>
+        <option name="charting.chart.nullValueMode">connect</option>
+        <option name="charting.chart.showDataLabels">none</option>
+        <option name="charting.fieldColors">{"Avg":"#1e93c6","signalfx":"#1e93c6","splunk_hec/platform_metrics":"#f2b827"}</option>
+        <option name="charting.gridLinesX.showMajorLines">true</option>
+        <option name="charting.axisY.abbreviation">auto</option>
+        <option name="charting.legend.mode">seriesCompare</option>
+        <option name="charting.fieldDashStyles">{"Avg":"solid","signalfx":"solid","splunk_hec/platform_metrics":"solid"}</option>
+        <option name="displayview">analytics_workspace</option>
+      </chart>
+    </panel>
+    <panel>
+      <chart>
+        <title>otelcol_exporter_sent_log_records</title>
+        <search>
+          <query>| mstats avg("otelcol_exporter_sent_log_records") prestats=true WHERE "index"="k8s_ws_metrics" $mstats_span$ BY exporter
+| timechart avg("otelcol_exporter_sent_log_records") $timechart_span$ useother=false BY exporter WHERE max in top5
+| fields - _span*</query>
+          <earliest>$global_time_tok.earliest$</earliest>
+          <latest>$global_time_tok.latest$</latest>
+        </search>
+        <option name="charting.drilldown">none</option>
+        <option name="charting.chart">line</option>
+        <option name="charting.chart.nullValueMode">connect</option>
+        <option name="charting.chart.showDataLabels">none</option>
+        <option name="charting.fieldColors">{"Avg":"#1e93c6","splunk_hec/o11y":"#1e93c6","splunk_hec/platform_logs":"#f2b827"}</option>
+        <option name="charting.gridLinesX.showMajorLines">true</option>
+        <option name="charting.axisY.abbreviation">auto</option>
+        <option name="charting.legend.mode">seriesCompare</option>
+        <option name="charting.fieldDashStyles">{"Avg":"solid","splunk_hec/o11y":"solid","splunk_hec/platform_logs":"solid"}</option>
+        <option name="displayview">analytics_workspace</option>
+      </chart>
+    </panel>
+    <panel>
+      <chart>
+        <title>otelcol_scraper_scraped_metric_points</title>
+        <search>
+          <query>| mstats avg("otelcol_scraper_scraped_metric_points") prestats=true WHERE "index"="k8s_ws_metrics" $mstats_span$ BY scraper
+| timechart avg("otelcol_scraper_scraped_metric_points") $timechart_span$ useother=false BY scraper WHERE max in top5
+| fields - _span*</query>
+          <earliest>$global_time_tok.earliest$</earliest>
+          <latest>$global_time_tok.latest$</latest>
+        </search>
+        <option name="charting.drilldown">none</option>
+        <option name="charting.chart">line</option>
+        <option name="charting.chart.nullValueMode">connect</option>
+        <option name="charting.chart.showDataLabels">none</option>
+        <option name="charting.fieldColors">{"Avg":"#1e93c6","disk":"#1e93c6","filesystem":"#f2b827","kubeletstats":"#d6563c","load":"#6a5c9e","network":"#31a35f"}</option>
+        <option name="charting.gridLinesX.showMajorLines">true</option>
+        <option name="charting.axisY.abbreviation">auto</option>
+        <option name="charting.legend.mode">seriesCompare</option>
+        <option name="charting.fieldDashStyles">{"Avg":"solid","disk":"solid","filesystem":"solid","kubeletstats":"solid","load":"solid","network":"solid"}</option>
+        <option name="displayview">analytics_workspace</option>
+      </chart>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <chart>
+        <title>otelcol_process_runtime_heap_alloc_bytes</title>
+        <search>
+          <query>| mstats avg("otelcol_process_runtime_heap_alloc_bytes") prestats=true WHERE "index"="k8s_ws_metrics" $mstats_span$ BY service_name
+| timechart avg("otelcol_process_runtime_heap_alloc_bytes") $timechart_span$ useother=false BY service_name WHERE max in top5
+| fields - _span*</query>
+          <earliest>$global_time_tok.earliest$</earliest>
+          <latest>$global_time_tok.latest$</latest>
+        </search>
+        <option name="charting.drilldown">none</option>
+        <option name="charting.chart">line</option>
+        <option name="charting.chart.nullValueMode">connect</option>
+        <option name="charting.chart.showDataLabels">none</option>
+        <option name="charting.fieldColors">{"Avg":"#1e93c6","otelcol":"#1e93c6"}</option>
+        <option name="charting.gridLinesX.showMajorLines">true</option>
+        <option name="charting.axisY.abbreviation">auto</option>
+        <option name="charting.legend.mode">seriesCompare</option>
+        <option name="charting.fieldDashStyles">{"Avg":"solid","otelcol":"solid"}</option>
+        <option name="displayview">analytics_workspace</option>
+      </chart>
+    </panel>
+    <panel>
+      <chart>
+        <title>otelcol_process_memory_rss</title>
+        <search>
+          <query>| mstats avg("otelcol_process_memory_rss") prestats=true WHERE "index"="k8s_ws_metrics" $mstats_span$ BY service_name
+| timechart avg("otelcol_process_memory_rss") $timechart_span$ useother=false BY service_name WHERE max in top5
+| fields - _span*</query>
+          <earliest>$global_time_tok.earliest$</earliest>
+          <latest>$global_time_tok.latest$</latest>
+        </search>
+        <option name="charting.drilldown">none</option>
+        <option name="charting.chart">line</option>
+        <option name="charting.chart.nullValueMode">connect</option>
+        <option name="charting.chart.showDataLabels">none</option>
+        <option name="charting.fieldColors">{"Avg":"#1e93c6","otelcol":"#1e93c6"}</option>
+        <option name="charting.gridLinesX.showMajorLines">true</option>
+        <option name="charting.axisY.abbreviation">auto</option>
+        <option name="charting.legend.mode">seriesCompare</option>
+        <option name="charting.fieldDashStyles">{"Avg":"solid","otelcol":"solid"}</option>
+        <option name="displayview">analytics_workspace</option>
+      </chart>
+    </panel>
+    <panel>
+      <chart>
+        <title>otelcol_receiver_accepted_log_records</title>
+        <search>
+          <query>| mstats avg("otelcol_receiver_accepted_log_records") prestats=true WHERE "index"="k8s_ws_metrics" $mstats_span$ BY receiver
+| timechart avg("otelcol_receiver_accepted_log_records") $timechart_span$ useother=false BY receiver WHERE max in top5
+| fields - _span*</query>
+          <earliest>$global_time_tok.earliest$</earliest>
+          <latest>$global_time_tok.latest$</latest>
+        </search>
+        <option name="charting.drilldown">none</option>
+        <option name="charting.chart">line</option>
+        <option name="charting.chart.nullValueMode">connect</option>
+        <option name="charting.chart.showDataLabels">none</option>
+        <option name="charting.fieldColors">{"Avg":"#1e93c6","filelog":"#1e93c6","otlp":"#f2b827"}</option>
+        <option name="charting.gridLinesX.showMajorLines">true</option>
+        <option name="charting.axisY.abbreviation">auto</option>
+        <option name="charting.legend.mode">seriesCompare</option>
+        <option name="charting.fieldDashStyles">{"Avg":"solid","filelog":"solid","otlp":"solid"}</option>
+        <option name="displayview">analytics_workspace</option>
+      </chart>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <chart>
+        <title>system.memory.usage</title>
+        <search>
+          <query>| mstats avg("system.memory.usage") prestats=true WHERE "index"="k8s_ws_metrics" $mstats_span$ BY "k8s.cluster.name"
+| timechart avg("system.memory.usage") $timechart_span$ useother=false BY "k8s.cluster.name" WHERE max in top5
+| fields - _span*</query>
+          <earliest>$global_time_tok.earliest$</earliest>
+          <latest>$global_time_tok.latest$</latest>
+        </search>
+        <option name="charting.drilldown">none</option>
+        <option name="charting.chart">line</option>
+        <option name="charting.chart.nullValueMode">connect</option>
+        <option name="charting.chart.showDataLabels">none</option>
+        <option name="charting.fieldColors">{"Avg":"#1e93c6","user012-minikube-cluster":"#1e93c6"}</option>
+        <option name="charting.gridLinesX.showMajorLines">true</option>
+        <option name="charting.axisY.abbreviation">auto</option>
+        <option name="charting.legend.mode">seriesCompare</option>
+        <option name="charting.fieldDashStyles">{"Avg":"solid","user012-minikube-cluster":"solid"}</option>
+        <option name="displayview">analytics_workspace</option>
+      </chart>
+    </panel>
+    <panel>
+      <chart>
+        <title>system.cpu.load_average.1m</title>
+        <search>
+          <query>| mstats avg("system.cpu.load_average.1m") prestats=true WHERE "index"="k8s_ws_metrics" $mstats_span$ BY "k8s.cluster.name"
+| timechart avg("system.cpu.load_average.1m") $timechart_span$ useother=false BY "k8s.cluster.name" WHERE max in top5
+| fields - _span*</query>
+          <earliest>$global_time_tok.earliest$</earliest>
+          <latest>$global_time_tok.latest$</latest>
+        </search>
+        <option name="charting.drilldown">none</option>
+        <option name="charting.chart">line</option>
+        <option name="charting.chart.nullValueMode">connect</option>
+        <option name="charting.chart.showDataLabels">none</option>
+        <option name="charting.fieldColors">{"Avg":"#1e93c6","user012-minikube-cluster":"#1e93c6"}</option>
+        <option name="charting.gridLinesX.showMajorLines">true</option>
+        <option name="charting.axisY.abbreviation">auto</option>
+        <option name="charting.legend.mode">seriesCompare</option>
+        <option name="charting.fieldDashStyles">{"Avg":"solid","user012-minikube-cluster":"solid"}</option>
+        <option name="displayview">analytics_workspace</option>
+      </chart>
+    </panel>
+    <panel>
+      <chart>
+        <title>container.cpu.utilization</title>
+        <search>
+          <query>| mstats p90("container.cpu.utilization") prestats=true WHERE "index"="k8s_ws_metrics" $mstats_span$ BY "k8s.pod.name"
+| timechart p90("container.cpu.utilization") $timechart_span$ useother=false BY "k8s.pod.name" WHERE max in top5
+| fields - _span*</query>
+          <earliest>$global_time_tok.earliest$</earliest>
+          <latest>$global_time_tok.latest$</latest>
+        </search>
+        <option name="charting.drilldown">none</option>
+        <option name="charting.chart">line</option>
+        <option name="charting.chart.nullValueMode">connect</option>
+        <option name="charting.chart.showDataLabels">none</option>
+        <option name="charting.fieldColors">{"Avg":"#1e93c6","kube-apiserver-minikube":"#ed8440","user012-k8s-ws-splunk-otel-collector-agent-sl48d":"#3863a0","user012-petclinic-otel-deployment-74575f67f4-csnpv":"#a2cc3e","user012-petclinic-otel-deployment-74575f67f4-gxwml":"#cc5068","user012-petclinic-otel-deployment-74575f67f4-p7lkn":"#73427f"}</option>
+        <option name="charting.gridLinesX.showMajorLines">true</option>
+        <option name="charting.axisY.abbreviation">auto</option>
+        <option name="charting.legend.mode">seriesCompare</option>
+        <option name="charting.fieldDashStyles">{"Avg":"solid","kube-apiserver-minikube":"solid","user012-k8s-ws-splunk-otel-collector-agent-sl48d":"solid","user012-petclinic-otel-deployment-74575f67f4-csnpv":"solid","user012-petclinic-otel-deployment-74575f67f4-gxwml":"solid","user012-petclinic-otel-deployment-74575f67f4-p7lkn":"solid"}</option>
+        <option name="displayview">analytics_workspace</option>
+      </chart>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <chart>
+        <title>k8s.pod.cpu.utilization</title>
+        <search>
+          <query>| mstats avg("k8s.pod.cpu.utilization") prestats=true WHERE "index"="k8s_ws_metrics" $mstats_span$ BY "k8s.pod.name"
+| timechart avg("k8s.pod.cpu.utilization") $timechart_span$ useother=false BY "k8s.pod.name" WHERE max in top5
+| fields - _span*</query>
+          <earliest>$global_time_tok.earliest$</earliest>
+          <latest>$global_time_tok.latest$</latest>
+        </search>
+        <option name="charting.drilldown">none</option>
+        <option name="charting.chart">line</option>
+        <option name="charting.chart.nullValueMode">connect</option>
+        <option name="charting.chart.showDataLabels">none</option>
+        <option name="charting.fieldColors">{"Avg":"#1e93c6","kube-apiserver-minikube":"#1e93c6","user012-k8s-ws-splunk-otel-collector-agent-sl48d":"#f2b827","user012-petclinic-otel-deployment-74575f67f4-csnpv":"#d6563c","user012-petclinic-otel-deployment-74575f67f4-gxwml":"#6a5c9e","user012-petclinic-otel-deployment-74575f67f4-p7lkn":"#31a35f"}</option>
+        <option name="charting.gridLinesX.showMajorLines">true</option>
+        <option name="charting.axisY.abbreviation">auto</option>
+        <option name="charting.legend.mode">seriesCompare</option>
+        <option name="charting.fieldDashStyles">{"Avg":"solid","kube-apiserver-minikube":"solid","user012-k8s-ws-splunk-otel-collector-agent-sl48d":"solid","user012-petclinic-otel-deployment-74575f67f4-csnpv":"solid","user012-petclinic-otel-deployment-74575f67f4-gxwml":"solid","user012-petclinic-otel-deployment-74575f67f4-p7lkn":"solid"}</option>
+        <option name="displayview">analytics_workspace</option>
+      </chart>
+    </panel>
+    <panel>
+      <chart>
+        <title>k8s.node.cpu.utilization</title>
+        <search>
+          <query>| mstats avg("k8s.node.cpu.utilization") prestats=true WHERE "index"="k8s_ws_metrics" $mstats_span$ BY "k8s.cluster.name"
+| timechart avg("k8s.node.cpu.utilization") $timechart_span$ useother=false BY "k8s.cluster.name" WHERE max in top5
+| fields - _span*</query>
+          <earliest>$global_time_tok.earliest$</earliest>
+          <latest>$global_time_tok.latest$</latest>
+        </search>
+        <option name="charting.drilldown">none</option>
+        <option name="charting.chart">line</option>
+        <option name="charting.chart.nullValueMode">connect</option>
+        <option name="charting.chart.showDataLabels">none</option>
+        <option name="charting.fieldColors">{"Avg":"#1e93c6","user012-minikube-cluster":"#1e93c6"}</option>
+        <option name="charting.gridLinesX.showMajorLines">true</option>
+        <option name="charting.axisY.abbreviation">auto</option>
+        <option name="charting.legend.mode">seriesCompare</option>
+        <option name="charting.fieldDashStyles">{"Avg":"solid","user012-minikube-cluster":"solid"}</option>
+        <option name="displayview">analytics_workspace</option>
+      </chart>
+    </panel>
+  </row>
+</form>
